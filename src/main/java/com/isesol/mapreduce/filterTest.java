@@ -30,27 +30,25 @@ public class filterTest {
 				"datanode01.isesol.com,datanode02.isesol.com,datanode03.isesol.com,datanode04.isesol.com,cmserver.isesol.com");
 		hbaseconf.set("hbase.zookeeper.property.clientPort", "2181");
 		hbaseconf.set("user", "hdfs");
-		HTable htable = new HTable(hbaseconf, "t_ui_all");
+		HTable htable = new HTable(hbaseconf, "usertable");
 		HTable htable1 = new HTable(hbaseconf, "test2");
 		Scan scan1 = new Scan();
 		scan1.setCaching(300);
 		
-		/*Filter rowfilter = new RowFilter(CompareOp.EQUAL,
-				new BinaryPrefixComparator(Bytes.toBytes("A131420033-1007-9223370539574828268")));
+		Filter rowfilter = new RowFilter(CompareOp.EQUAL,
+				new BinaryPrefixComparator(Bytes.toBytes("user1019314459807976796")));
 		Filter rowfilter1 = new RowFilter(CompareOp.EQUAL,
-				new BinaryComparator(Bytes.toBytes("A131420033-1007-9223370539574828268"))); */
+				new BinaryComparator(Bytes.toBytes("A131420033-1007-9223370539574828268"))); 
 
 		// scan1.setRowPrefixFilter(Bytes.toBytes("A131420033-1007-9223370539574828268"));
 		// Filter filter = new SingleColumnValueFilter(Bytes.toBytes("cf"),
 		// Bytes.toBytes("fault_level2_name"), CompareOp.EQUAL,
 		// Bytes.toBytes("电气问题"));
 		// scan1.setFilter(rowfilter);
-		// scan1.setRowPrefixFilter(Bytes.toBytes("A131420033-1007-9223370539574828268"));
+		scan1.setRowPrefixFilter(Bytes.toBytes("user1019314459807976796"));
 		ResultScanner scaner = htable.getScanner(scan1);
 		List<Put> list = new ArrayList<Put>();
 		Result result = null;
-		int j = 0;
-		System.out.println("start to scan original table and put this result into List" + dateformat.format(System.currentTimeMillis()));
 		
 		htable1.setWriteBufferSize(6*1024*1024);
 		//htable1.setAutoFlush(false);
@@ -64,20 +62,7 @@ public class filterTest {
 				put.add("cf".getBytes(), Bytes.toBytes(new String(result.listCells().get(i).getQualifier())), result
 						.getValue("cf".getBytes(), new String(result.listCells().get(i).getQualifier()).getBytes()));
 			}
-		/*	j++;
-			htable1.put(put);
-			System.out.println("total number is " + j + " start to put these data into hbase");*/
-
-			list.add(put);
-			
-			j++;
-			
-			if(j % 500 == 0){
-				System.out.println("total number is " + j + " start to put these data into hbase" + list.size());
-				
-				htable1.put(list);
-				list.clear();
-			}		
+		
 		}
 		
 		htable1.put(list);

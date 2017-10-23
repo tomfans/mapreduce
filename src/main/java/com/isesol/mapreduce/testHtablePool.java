@@ -1,6 +1,7 @@
 package com.isesol.mapreduce;
 import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.io.ImmutableBytesWritable;
+import org.apache.hadoop.hbase.security.visibility.VisibilityExpEvaluator;
 import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.client.Table;
 import org.apache.hadoop.hbase.client.Result;
@@ -26,35 +27,33 @@ import org.apache.hadoop.hbase.filter.CompareFilter.CompareOp;
 import org.apache.hadoop.hbase.filter.FilterList;
 import org.apache.hadoop.hbase.util.Bytes;
 
+import com.sun.jndi.url.iiopname.iiopnameURLContextFactory;
+
+import jdk.internal.org.objectweb.asm.tree.analysis.Value;
+
 public class testHtablePool {
 
 	public static void main(String[] args) throws IOException{
 		
-		Configuration configuration  = new Configuration();
-		HConnection connection = HConnectionManager.createConnection(configuration);
+		Configuration conf  = new Configuration();
+        conf.set("hbase.zookeeper.quorum",
+				"datanode01.isesol.com,datanode02.isesol.com,datanode03.isesol.com,datanode04.isesol.com,cmserver.isesol.com");
+        conf.set("hbase.zookeeper.property.clientPort", "2181");
+		HConnection connection = HConnectionManager.createConnection(conf);
 		HTableInterface table = connection.getTable("test2");
 		table.setAutoFlush(false);
-		
-		Configuration conf = HBaseConfiguration.create();
-		HTablePool pool = new HTablePool(conf, Integer.MAX_VALUE);
-		
-		HTableInterface table1 = pool.getTable("test2");
-		
-		table1.setAutoFlush(false);
-		
-		Connection conn = ConnectionFactory.createConnection(conf);
 	
-		Table table3 = conn.getTable(TableName.valueOf("test2"));
 		
-		table3.setWriteBufferSize(3*1024*1024);
-		
-		Table table4 = conn.getTable(TableName.valueOf("test2"));
+		Table table4 = connection.getTable(TableName.valueOf("test2"));
+		Scan scan = new Scan();
+		ResultScanner resultScanner = table4.getScanner(scan);
 
-
-		
+		for(Result res : resultScanner) {
+			System.out.println(res.getColumn(Bytes.toBytes("cf"), Bytes.toBytes("name")));
+		}
 		
 		// use table as needed, the table returned is lightweight
-		table1.close();
+		table4.close();
 		// use the connection for other access to the cluster
 		connection.close();
 	}
