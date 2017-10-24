@@ -17,7 +17,7 @@ import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.mapred.JobConf;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
-import org.apache.hadoop.mapreduce.filecache.DistributedCache;
+//import org.apache.hadoop.mapreduce.filecache.DistributedCache;
 import org.apache.hadoop.mapreduce.lib.db.DBConfiguration;
 import org.apache.hadoop.mapreduce.lib.db.DBInputFormat;
 import org.apache.hadoop.mapreduce.lib.db.DBWritable;
@@ -52,7 +52,7 @@ public class DBOutPutformat {
 
 		FileOutputFormat.setOutputPath(job, new Path(args[0]));
 
-		DistributedCache.addFileToClassPath(new Path("/user/hdfs/myjars/mysql-connector-java.jar"), configuration);
+	//	DistributedCache.addFileToClassPath(new Path("/user/hdfs/myjars/mysql-connector-java.jar"), configuration);
 
 		System.exit(job.waitForCompletion(true) ? 0 : 1);
 	}
