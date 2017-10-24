@@ -1,6 +1,5 @@
 package com.isesol.mapreduce;
 
-import java.awt.image.AreaAveragingScaleFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
@@ -21,12 +20,7 @@ import org.apache.hadoop.mapreduce.lib.input.SplitLineReader;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.yarn.webapp.hamlet.Hamlet.COL;
 
-import com.cloudera.io.netty.handler.codec.http.HttpHeaders.Values;
-import com.sun.jndi.url.iiopname.iiopnameURLContextFactory;
-import com.sun.org.apache.bcel.internal.generic.NEW;
-import com.sun.xml.bind.v2.schemagen.xmlschema.List;
 
-import jdk.internal.org.objectweb.asm.tree.analysis.Value;
 
 public class findparent {
 

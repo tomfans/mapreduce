@@ -27,9 +27,7 @@ import org.apache.hadoop.hbase.filter.CompareFilter.CompareOp;
 import org.apache.hadoop.hbase.filter.FilterList;
 import org.apache.hadoop.hbase.util.Bytes;
 
-import com.sun.jndi.url.iiopname.iiopnameURLContextFactory;
 
-import jdk.internal.org.objectweb.asm.tree.analysis.Value;
 
 public class testHtablePool {
 

@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
-import org.apache.commons.net.PrintCommandListener;
-import org.apache.commons.net.nntp.NewsgroupInfo;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
@@ -15,14 +13,9 @@ import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
-import org.apache.hadoop.mapreduce.lib.input.SplitLineReader;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
-import org.apache.hadoop.yarn.webapp.hamlet.Hamlet.COL;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 
-
-
-import jdk.internal.org.objectweb.asm.tree.analysis.Value;
 
 public class mapjoin {
 
