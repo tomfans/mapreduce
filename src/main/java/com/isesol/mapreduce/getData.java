@@ -28,27 +28,20 @@ import com.sun.jndi.url.iiopname.iiopnameURLContextFactory;
 
 public class getData implements Serializable {
 	public static void main(String[] args) {
-
-		String driver = "com.mysql.jdbc.Driver";
-		String url = "jdbc:mysql://10.215.4.161:3306/test";
-		String user = "admin";
-		String password = "internal";
-		try {
-			System.out.println("it already gets into insert function");
-			System.out.println("1");
-			Class.forName(driver);
-			System.out.println("2");
-			Connection conn = DriverManager.getConnection(url, user, password);
-			conn.setAutoCommit(true);
-			Statement statement = conn.createStatement();
-			String sql = "insert into test (id) values (" + 1 + ")";
-			System.out.println(sql);
-			statement.execute(sql);
-			statement.close();
-			conn.close();
-
-		} catch (Exception ex) {
-			ex.printStackTrace();
+		
+		List<String> list = new ArrayList<String>();
+		list.add("a");
+		list.add("b");
+		list.add("c");
+		list.add("d");
+		
+		List<List<String>> list1 = new ArrayList<List<String>>();
+		
+		list1 = findSortMBA.findsort(list, 2);
+		
+		for(List<String> alist : list1){
+			System.out.println(alist.get(0) + "-" + alist.get(1));
 		}
+		
 	}
 }

@@ -16,9 +16,11 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.GZIPInputStream;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataInputStream;
+import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hbase.util.Bytes;
@@ -48,21 +50,23 @@ public class binFileRead_forscala {
 		ArrayList resultset = new ArrayList();
 
 		try {
-
-			Class<?> codecClass = Class.forName("org.apache.hadoop.io.compress.GzipCodec");
+			
+			//解压缩gz文件，并写入新的文件
+			
+			unGzipFile(fileName);
+			//Class<?> codecClass = Class.forName("org.apache.hadoop.io.compress.GzipCodec");
 			Configuration conf = new Configuration();
 			FileSystem fs = FileSystem.get(conf);
-			CompressionCodec codec = (CompressionCodec) ReflectionUtils.newInstance(codecClass, conf);
-			FSDataInputStream inputStream = fs.open(new Path(fileName));
-			InputStream in = codec.createInputStream(inputStream);
-			// DataInputStream in = new DataInputStream(new
-			// BufferedInputStream(new FileInputStream(fileName)));
+			//CompressionCodec codec = (CompressionCodec) ReflectionUtils.newInstance(codecClass, conf);
+			FSDataInputStream inputStream = fs.open(new Path(fileName.substring(0, fileName.lastIndexOf('.'))));
+			//InputStream in = codec.createInputStream(inputStream);
+
 			byte[] itemBuf = new byte[8];
 			int i = 0;
 			int j = 0;
 			String result = "";
 			while (true) {
-				int readlength = in.read(itemBuf, 0, 8);
+				int readlength = inputStream.read(itemBuf, 0, 8);
 				if (readlength <= 0)
 					break;
 				double resultDouble = arr2double(itemBuf, 0);
@@ -82,7 +86,7 @@ public class binFileRead_forscala {
 				}
 
 			}
-			in.close();
+			inputStream.close();
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -139,6 +143,37 @@ public class binFileRead_forscala {
 			colList.add(val[i]);
 		}
 		return colList;
+	}
+
+	public static void unGzipFile(String sourcedir) {
+		String ouputfile = "";
+		try {
+			// 建立gzip压缩文件输入流
+			Configuration conf = new Configuration();
+			FileSystem fs = FileSystem.get(conf);
+			FSDataInputStream inputStream = fs.open(new Path(sourcedir));
+			// FileInputStream fin = new FileInputStream(sourcedir);
+			// 建立gzip解压工作流
+			GZIPInputStream gzin = new GZIPInputStream(inputStream);
+			// 建立解压文件输出流
+			ouputfile = sourcedir.substring(0, sourcedir.lastIndexOf('.'));
+			// FileOutputStream fout = new FileOutputStream(ouputfile);
+
+			FSDataOutputStream fout = fs.create(new Path(ouputfile));
+			int num;
+			byte[] buf = new byte[1024];
+
+			while ((num = gzin.read(buf, 0, buf.length)) > 0) {
+				fout.write(buf, 0, num);
+			}
+
+			gzin.close();
+			fout.close();
+		} catch (Exception ex) {
+			System.out.println("there are some errors");
+			System.err.println(ex.toString());
+		}
+		return;
 	}
 
 }
