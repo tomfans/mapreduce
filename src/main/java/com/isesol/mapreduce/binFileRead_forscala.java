@@ -50,17 +50,14 @@ public class binFileRead_forscala {
 		ArrayList resultset = new ArrayList();
 
 		try {
-			
-			//解压缩gz文件，并写入新的文件
-			
+
+			// 解压缩gz文件，并写入新的文件
+
 			unGzipFile(fileName);
-			//Class<?> codecClass = Class.forName("org.apache.hadoop.io.compress.GzipCodec");
+
 			Configuration conf = new Configuration();
 			FileSystem fs = FileSystem.get(conf);
-			//CompressionCodec codec = (CompressionCodec) ReflectionUtils.newInstance(codecClass, conf);
 			FSDataInputStream inputStream = fs.open(new Path(fileName.substring(0, fileName.lastIndexOf('.'))));
-			//InputStream in = codec.createInputStream(inputStream);
-
 			byte[] itemBuf = new byte[8];
 			int i = 0;
 			int j = 0;
@@ -92,6 +89,7 @@ public class binFileRead_forscala {
 			e.printStackTrace();
 		}
 
+		cleanFile(fileName);
 		return resultset;
 	}
 
@@ -123,18 +121,6 @@ public class binFileRead_forscala {
 	public static ArrayList<String> getHaseCols(String bizData) throws ClassNotFoundException, IOException {
 		ArrayList colList = new ArrayList<String>();
 		int i;
-		/*
-		 * Configuration hbaseconf = HBaseConfiguration.create();
-		 * hbaseconf.set("hbase.zookeeper.quorum",
-		 * "datanode01.isesol.com,datanode02.isesol.com,datanode03.isesol.com,datanode04.isesol.com,cmserver.isesol.com"
-		 * ); hbaseconf.set("hbase.zookeeper.property.clientPort", "2181");
-		 * hbaseconf.set("maxSessionTimeout", "6"); HTable table = new
-		 * HTable(hbaseconf, "tab_col_config"); Get get = new
-		 * Get(colId.getBytes()); Result result = table.get(get); for(int i = 0;
-		 * i<= result.listCells().size() - 1; i++){ colList.add(new
-		 * String(result.listCells().get(i).getQualifier())); } table.close();
-		 */
-
 		JSONObject obj = new JSONObject(bizData);
 		JSONObject obj2 = new JSONObject(obj.getString("ipx_bigData_cmd-isesol"));
 		String param = obj2.getString("collectParam");
@@ -145,6 +131,8 @@ public class binFileRead_forscala {
 		return colList;
 	}
 
+	// 解压缩 gzip文件，然后生成新的非GIZP文件。
+
 	public static void unGzipFile(String sourcedir) {
 		String ouputfile = "";
 		try {
@@ -152,14 +140,13 @@ public class binFileRead_forscala {
 			Configuration conf = new Configuration();
 			FileSystem fs = FileSystem.get(conf);
 			FSDataInputStream inputStream = fs.open(new Path(sourcedir));
-			// FileInputStream fin = new FileInputStream(sourcedir);
 			// 建立gzip解压工作流
 			GZIPInputStream gzin = new GZIPInputStream(inputStream);
 			// 建立解压文件输出流
 			ouputfile = sourcedir.substring(0, sourcedir.lastIndexOf('.'));
-			// FileOutputStream fout = new FileOutputStream(ouputfile);
 
 			FSDataOutputStream fout = fs.create(new Path(ouputfile));
+
 			int num;
 			byte[] buf = new byte[1024];
 
@@ -174,6 +161,22 @@ public class binFileRead_forscala {
 			System.err.println(ex.toString());
 		}
 		return;
+	}
+
+	public static void cleanFile(String filename) {
+
+		String ouputfile = "";
+		try {
+
+			Configuration conf = new Configuration();
+			FileSystem fs = FileSystem.get(conf);
+			ouputfile = filename.substring(0, filename.lastIndexOf('.'));
+			fs.delete(new Path(ouputfile));
+
+		} catch (Exception ex) {
+			System.out.println("clean file failed!");
+			System.err.println(ex.toString());
+		}
 	}
 
 }
