@@ -1,48 +1,17 @@
 package com.isesol.mapreduce;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.zip.GZIPInputStream;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.zip.GZIPInputStream;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.hbase.util.Bytes;
-import org.apache.hadoop.io.compress.CompressionCodec;
-import org.apache.hadoop.util.ReflectionUtils;
-
-import com.sun.org.apache.bcel.internal.generic.NEW;
-
-import org.apache.hadoop.hbase.HBaseConfiguration;
-import org.apache.hadoop.mapred.JobConf;
-import org.apache.hadoop.hbase.client.Put;
-import org.apache.hadoop.hbase.client.Result;
-import org.apache.hadoop.hbase.io.ImmutableBytesWritable;
-import org.apache.hadoop.hbase.client.Scan;
-import org.apache.hadoop.hbase.client.Get;
-import org.apache.hadoop.hbase.TableName;
-import org.apache.hadoop.hbase.filter.RowFilter;
-import org.apache.hadoop.hbase.filter.*;
-import org.apache.hadoop.hbase.filter.CompareFilter.CompareOp;
-import org.apache.hadoop.hbase.client.HTable;
-import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.sun.imageio.spi.RAFImageInputStreamSpi;
 
 public class binFileRead_forscala {
 
@@ -52,9 +21,7 @@ public class binFileRead_forscala {
 		try {
 
 			// 解压缩gz文件，并写入新的文件
-
 			unGzipFile(fileName);
-
 			Configuration conf = new Configuration();
 			FileSystem fs = FileSystem.get(conf);
 			FSDataInputStream inputStream = fs.open(new Path(fileName.substring(0, fileName.lastIndexOf('.'))));
@@ -139,6 +106,9 @@ public class binFileRead_forscala {
 			// 建立gzip压缩文件输入流
 			Configuration conf = new Configuration();
 			FileSystem fs = FileSystem.get(conf);
+			if(! fs.exists(new Path(sourcedir))){
+				System.out.println("the file is not exists");
+			}
 			FSDataInputStream inputStream = fs.open(new Path(sourcedir));
 			// 建立gzip解压工作流
 			GZIPInputStream gzin = new GZIPInputStream(inputStream);
@@ -154,15 +124,17 @@ public class binFileRead_forscala {
 				fout.write(buf, 0, num);
 			}
 
+			System.out.println("ungzip is successful,the file name is " + ouputfile);
 			gzin.close();
 			fout.close();
 		} catch (Exception ex) {
-			System.out.println("there are some errors");
+			System.out.println("ungip process errors");
 			System.err.println(ex.toString());
 		}
 		return;
 	}
 
+	
 	public static void cleanFile(String filename) {
 
 		String ouputfile = "";
@@ -172,11 +144,12 @@ public class binFileRead_forscala {
 			FileSystem fs = FileSystem.get(conf);
 			ouputfile = filename.substring(0, filename.lastIndexOf('.'));
 			fs.delete(new Path(ouputfile));
+			System.out.println("clean file successful!");
 
 		} catch (Exception ex) {
 			System.out.println("clean file failed!");
 			System.err.println(ex.toString());
 		}
-	}
+	} 
 
 }

@@ -26,65 +26,23 @@ public class unCompressHDFSFile {
 	public static void main(String[] args) throws ClassNotFoundException, IOException {
 		ArrayList resultset = new ArrayList();
 		String fileName = args[0];
+		String tempString;
 		try {
-			Class<?> codecClass = Class.forName("org.apache.hadoop.io.compress.GzipCodec");
+		//	Class<?> codecClass = Class.forName("org.apache.hadoop.io.compress.GzipCodec");
 			Configuration conf = new Configuration();
+			conf.addResource("conf/core-site.xml");
+			conf.addResource("conf/hdfs-site.xml");
 			FileSystem fs = FileSystem.get(conf);
-			CompressionCodec codec = (CompressionCodec) ReflectionUtils.newInstance(codecClass, conf);
+		//	CompressionCodec codec = (CompressionCodec) ReflectionUtils.newInstance(codecClass, conf);
 			FSDataInputStream inputStream = fs.open(new Path(fileName));
-			InputStream in = codec.createInputStream(inputStream);
-			byte[] itemBuf = new byte[8];
-			int i = 0;
-			int j = 0;
-			String result = "";
-			while (true) {
-				int readlength = in.read(itemBuf, 0, 8);
-				if (readlength <= 0)
-					break;
-				double resultDouble = arr2double(itemBuf, 0);
-				i++;
-				j++;
-
-				if (j == 1) {
-					result = result + resultDouble;
-				} else {
-					result = result + "," + resultDouble;
-				}
-
-				if (i % 3 == 0) {
-					resultset.add(result);
-					System.out.println(i + ":" + result);
-					result = "";
-					j = 0;
-				}
-
+			//InputStream in = inputStream.createInputStream(inputStream);
+			while ((tempString = inputStream.readLine()) != null) {
+				
+				System.out.println(tempString);
+			
 			}
-			// System.out.println(resultset.get(0));
-			in.close();
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (Exception ex) {
+			ex.printStackTrace();
 		}
-
-	}
-
-	// FSDataOutputStream out = fs.create(new Path(outFileName));
-	// IOUtils.copyBytes(in, out, conf);
-	// IOUtils.closeStream(in);
-	public static double arr2double(byte[] arr, int start) {
-		int i = 0;
-		int len = 8;
-		int cnt = 0;
-		byte[] tmp = new byte[len];
-		for (i = start; i < (start + len); i++) {
-			tmp[cnt] = arr[i];
-			cnt++;
-		}
-		long accum = 0;
-		i = 0;
-		for (int shiftBy = 0; shiftBy < 64; shiftBy += 8) {
-			accum |= ((long) (tmp[i] & 0xff)) << shiftBy;
-			i++;
-		}
-		return Double.longBitsToDouble(accum);
 	}
 }

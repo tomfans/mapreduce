@@ -38,16 +38,16 @@ public class testHtablePool {
 				"datanode01.isesol.com,datanode02.isesol.com,datanode03.isesol.com,datanode04.isesol.com,cmserver.isesol.com");
         conf.set("hbase.zookeeper.property.clientPort", "2181");
 		HConnection connection = HConnectionManager.createConnection(conf);
-		HTableInterface table = connection.getTable("test2");
+		HTableInterface table = connection.getTable("t_tool_health_simp_score");
 		table.setAutoFlush(false);
 	
 		
-		Table table4 = connection.getTable(TableName.valueOf("test2"));
+		Table table4 = connection.getTable(TableName.valueOf("t_tool_health_simp_score"));
 		Scan scan = new Scan();
 		ResultScanner resultScanner = table4.getScanner(scan);
 
 		for(Result res : resultScanner) {
-			System.out.println(res.getColumn(Bytes.toBytes("cf"), Bytes.toBytes("name")));
+			System.out.println(res.getColumn(Bytes.toBytes("cf"), Bytes.toBytes("accuracy_score")));
 		}
 		
 		// use table as needed, the table returned is lightweight
