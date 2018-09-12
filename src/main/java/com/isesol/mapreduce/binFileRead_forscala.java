@@ -11,7 +11,6 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.json.JSONObject;
 
-import com.sun.imageio.spi.RAFImageInputStreamSpi;
 
 public class binFileRead_forscala {
 
